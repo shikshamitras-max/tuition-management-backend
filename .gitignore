@@ -1,0 +1,18 @@
+# Secrets
+.env
+
+# Database
+tuition.db
+
+# Python cache
+__pycache__/
+*.pyc
+
+# PDFs & reports
+*.pdf
+
+# Uploaded / generated files
+static/
+
+# Virtual environment
+venv/
