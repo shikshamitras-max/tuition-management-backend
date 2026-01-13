@@ -115,3 +115,25 @@ conn.commit()
 conn.close()
 
 print("total_fees column added")
+
+import sqlite3
+
+conn = sqlite3.connect("tuition.db")
+cursor = conn.cursor()
+
+# Add total_fees if missing
+try:
+    cursor.execute("ALTER TABLE students ADD COLUMN total_fees INTEGER DEFAULT 0")
+except:
+    pass
+
+# Add parent_phone if missing
+try:
+    cursor.execute("ALTER TABLE students ADD COLUMN parent_phone TEXT")
+except:
+    pass
+
+conn.commit()
+conn.close()
+
+print("Database upgraded")
