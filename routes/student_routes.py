@@ -8,30 +8,40 @@ student_bp = Blueprint("student_bp", __name__)
 # -------------------------------
 @student_bp.route("/students", methods=["POST"])
 def add_student():
-    data = request.json
+    try:
+        data = request.get_json(force=True)
 
-    if not data or "name" not in data or "total_fees" not in data:
-        return jsonify({"error": "name and total_fees required"}), 400
+        # Required fields
+        required = ["name", "batch", "phone", "parent_phone", "total_fees"]
 
-    conn = get_db_connection()
-    cursor = conn.cursor()
+        for field in required:
+            if field not in data:
+                return jsonify({"error": f"{field} is required"}), 400
 
-    cursor.execute("""
-        INSERT INTO students (name, phone, email, batch, total_fees, fees_paid)
-        VALUES (?, ?, ?, ?, ?, 0)
-    """, (
-        data["name"],
-        data.get("phone"),
-        data.get("email"),
-        data.get("batch"),
-        data["total_fees"]
-    ))
+        conn = get_db_connection()
+        cursor = conn.cursor()
 
-    conn.commit()
-    conn.close()
+        cursor.execute("""
+            INSERT INTO students 
+            (name, phone, email, batch, total_fees, fees_paid, parent_phone)
+            VALUES (?, ?, ?, ?, ?, 0, ?)
+        """, (
+            data["name"],
+            data["phone"],
+            data.get("email"),
+            data["batch"],
+            data["total_fees"],
+            data["parent_phone"]
+        ))
 
-    return jsonify({"message": "Student added successfully"}), 201
+        conn.commit()
+        conn.close()
 
+        return jsonify({"message": "Student added successfully"}), 201
+
+    except Exception as e:
+        print("STUDENT INSERT ERROR:", str(e))
+        return jsonify({"error": str(e)}), 500
 
 # -------------------------------
 # GET STUDENTS
