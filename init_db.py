@@ -100,3 +100,18 @@ conn.commit()
 conn.close()
 
 print("✅ Database initialized successfully (students, fees, users, attendance, invoices)")
+
+import sqlite3
+
+conn = sqlite3.connect("tuition.db")
+cursor = conn.cursor()
+
+cursor.execute("""
+ALTER TABLE students 
+ADD COLUMN total_fees INTEGER DEFAULT 0
+""")
+
+conn.commit()
+conn.close()
+
+print("total_fees column added")
