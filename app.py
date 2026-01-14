@@ -1,11 +1,9 @@
-import init_db
-from init_exam_db import init_exam_db
-from init_institute import init_institute
 from dotenv import load_dotenv
 load_dotenv()
 
 from flask import Flask
 from flask_cors import CORS
+
 from routes.student_routes import student_bp
 from routes.attendance_routes import attendance_bp
 from routes.auth_routes import auth_bp
@@ -29,16 +27,12 @@ from routes.admin_dashboard_routes import admin_dashboard_bp
 app = Flask(__name__)
 CORS(app)
 
-# Auto-create database on server start
-init_exam_db()
-init_institute()
-
-# 🔴 REGISTER BLUEPRINTS (MANDATORY)
+# ✅ Register all APIs
 app.register_blueprint(student_bp)
 app.register_blueprint(attendance_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(fees_bp)
-app.register_blueprint(dashboard_bp)  
+app.register_blueprint(dashboard_bp)
 app.register_blueprint(invoice_bp)
 app.register_blueprint(exam_bp)
 app.register_blueprint(profile_bp)
@@ -54,7 +48,7 @@ app.register_blueprint(whatsapp_send_bp)
 app.register_blueprint(monthly_analytics_bp)
 app.register_blueprint(admin_dashboard_bp)
 
-# 🔍 DEBUG: show all routes
+# Debug: list all routes
 print(app.url_map)
 
 if __name__ == "__main__":
