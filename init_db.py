@@ -2,7 +2,7 @@ import sqlite3
 from pathlib import Path
 
 # -------------------------------
-# DATABASE PATH (IMPORTANT)
+# DATABASE PATH
 # -------------------------------
 BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "tuition.db"
@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS attendance (
 """)
 
 # -------------------------------
-# INSTITUTE SETTINGS (ONE-TIME)
+# INSTITUTE SETTINGS
 # -------------------------------
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS institute_settings (
@@ -96,44 +96,21 @@ CREATE TABLE IF NOT EXISTS invoices (
 )
 """)
 
-conn.commit()
-conn.close()
+# -------------------------------
+# SAFE COLUMN UPGRADES
+# -------------------------------
+cursor.execute("PRAGMA table_info(students)")
+columns = [c[1] for c in cursor.fetchall()]
 
-print("✅ Database initialized successfully (students, fees, users, attendance, invoices)")
-
-import sqlite3
-
-conn = sqlite3.connect("tuition.db")
-cursor = conn.cursor()
-
-cursor.execute("""
-ALTER TABLE students 
-ADD COLUMN total_fees INTEGER DEFAULT 0
-""")
-
-conn.commit()
-conn.close()
-
-print("total_fees column added")
-
-import sqlite3
-
-conn = sqlite3.connect("tuition.db")
-cursor = conn.cursor()
-
-# Add total_fees if missing
-try:
+if "total_fees" not in columns:
     cursor.execute("ALTER TABLE students ADD COLUMN total_fees INTEGER DEFAULT 0")
-except:
-    pass
+    print("total_fees column added")
 
-# Add parent_phone if missing
-try:
+if "parent_phone" not in columns:
     cursor.execute("ALTER TABLE students ADD COLUMN parent_phone TEXT")
-except:
-    pass
+    print("parent_phone column added")
 
 conn.commit()
 conn.close()
 
-print("Database upgraded")
+print("✅ Database initialized & upgraded safely")
