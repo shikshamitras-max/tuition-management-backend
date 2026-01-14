@@ -1,4 +1,4 @@
-from init_db import init_db
+import init_db
 from init_exam_db import init_exam_db
 from init_institute import init_institute
 from dotenv import load_dotenv
@@ -30,7 +30,6 @@ app = Flask(__name__)
 CORS(app)
 
 # Auto-create database on server start
-init_db()
 init_exam_db()
 init_institute()
 
