@@ -3,26 +3,41 @@ from database.db import get_db_connection
 conn = get_db_connection()
 cursor = conn.cursor()
 
+# -----------------------------------
+# CREATE INSTITUTE SETTINGS TABLE
+# -----------------------------------
 cursor.execute("""
-CREATE TABLE IF NOT EXISTS institute (
+CREATE TABLE IF NOT EXISTS institute_settings (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
+    institute_name TEXT NOT NULL,
     address TEXT NOT NULL,
-    phone TEXT NOT NULL,
-    signature TEXT NOT NULL
+    contact TEXT NOT NULL,
+    logo_path TEXT,
+    signature_name TEXT
 )
 """)
 
+# -----------------------------------
+# INSERT DEFAULT INSTITUTE DATA (ONLY ONCE)
+# -----------------------------------
 cursor.execute("""
-INSERT INTO institute (name, address, phone, signature)
-SELECT 'ABC Tuition Classes',
-       'Main Road, City',
-       '9999999999',
-       'Director'
-WHERE NOT EXISTS (SELECT 1 FROM institute)
+INSERT INTO institute_settings (
+    institute_name,
+    address,
+    contact,
+    logo_path,
+    signature_name
+)
+SELECT
+    'Shiksha Mitra',
+    'Shop-110/111, 1st floor, Vitoria Heights, Ugat Canal Jn., Jahangirpura, Surat-395005',
+    '9712212215',
+    'static/logo.png',
+    'Director'
+WHERE NOT EXISTS (SELECT 1 FROM institute_settings)
 """)
 
 conn.commit()
 conn.close()
 
-print("✅ Institute table created & data inserted")
+print("✅ Institute settings created & initialized safely")
